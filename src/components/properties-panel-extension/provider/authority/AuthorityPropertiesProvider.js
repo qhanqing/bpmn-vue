@@ -47,7 +47,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
     ];
 }
 
-function createAuthorityTabGroups(element) {
+function createAuthorityTabGroups(translate,element) {
     let editAuthorityGroup = {
         id: 'edit-authority',
         label: '编辑权限',
@@ -55,7 +55,7 @@ function createAuthorityTabGroups(element) {
     }
 
     // 每个属性都有自己的props方法
-    TitleProps(editAuthorityGroup, element);
+    TitleProps(translate,editAuthorityGroup, element);
 
     return [
         editAuthorityGroup
@@ -63,7 +63,7 @@ function createAuthorityTabGroups(element) {
 }
 
 export default function AuthorityPropertiesProvider(
-    eventBus, bpmnFactory, canvas, // 这里是要用到什么就引入什么
+    eventBus, bpmnFactory, canvas,
     elementRegistry, translate
 ) {
     PropertiesActivator.call(this, eventBus);
@@ -78,7 +78,7 @@ export default function AuthorityPropertiesProvider(
         let authorityTab = {
             id: 'authority',
             label: '权限',
-            groups: createAuthorityTabGroups(element)
+            groups: createAuthorityTabGroups(translate,element)
         };
         return [
             generalTab,

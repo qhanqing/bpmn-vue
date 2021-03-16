@@ -1,9 +1,9 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 
-export default function(group,element){
-    if(is(element,'bpmn:start')){
-        group.entries.push(entryFactory.selectBox({
+export default function(translate,group,element){
+    if(is(element,'bpmn:StartEvent')){
+        group.entries.push(entryFactory.selectBox(translate,{
             id: 'assignee',
             description: '负责人',
             label: '负责人',
@@ -14,5 +14,13 @@ export default function(group,element){
                 {name:'userd',value:'112'}
             ]
         }));
+    }
+    if(is(element,'bpmn:SequenceFlow')){
+        console.log("translate",translate)
+        group.entries.push(entryFactory.textField(translate,{
+            id: 'condition',
+            label: '条件',
+            modelProperty: 'condition'
+        }))
     }
 }

@@ -1,0 +1,37 @@
+{
+  "name": "activiti",
+  "prefix": "activiti",
+  "uri": "http://activiti.org/bpmn",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "LinDaiDaiStartEvent",
+      "extends": [
+        "bpmn:StartEvent"
+      ],
+      "properties": [
+        {
+          "name": "assignee",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "activitiCondition",
+      "extends":[
+        "bpmn:SequenceFlow"
+      ],
+      "properties":[
+        {
+          "name": "condition",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+}
