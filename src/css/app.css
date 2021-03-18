@@ -1,0 +1,69 @@
+/* app.css */
+/*自定义左侧菜单样式*/
+.icon-custom { /* 定义一个公共的类名 */
+    border-radius: 50%;
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-bottom: 5px;
+}
+
+.icon-custom.icon-custom-start::after {
+    font-size: 12px;
+    content: '开始'; /* 开始节点标题 */
+    text-align: center;
+    position: absolute;
+    top: 26px;
+    left: 11px;
+}
+
+
+.icon-custom.lindaidai-task::after {
+    font-size: 12px;
+    content: '任务'; /* 任务节点标题 */
+    text-align: center;
+    position: absolute;
+    top: 78px;
+    left: 11px;
+}
+
+.icon-custom.icon-custom-end::after {
+    font-size: 12px;
+    content: '结束'; /* 结束节点标题 */
+    text-align: center;
+    position: absolute;
+    top: 128px;
+    left: 11px;
+
+}
+
+.icon-custom.icon-custom-connection-multi {
+    padding-bottom: 20px;
+}
+
+.icon-custom.icon-custom-connection-multi::after {
+    font-size: 12px;
+    content: '箭头'; /* 箭头节点标题 */
+    text-align: center;
+    position: absolute;
+    top: 180px;
+    left: 11px;
+}
+
+.icon-custom.icon-custom-remove { /* 删除按钮 */
+    background-image: url('../assets/remove.png') !important;
+}
+
+.icon-custom.icon-custom-remove:hover { /* 删除按钮 */
+    background: url('../assets/remove.png') center no-repeat !important;
+    background-size: cover !important;
+}
+
+.icon-custom.icon-custom-arrows { /* 箭头按钮 弃用*/
+    background-image: url('../assets/arrows.png') !important;
+}
+
+.icon-custom.icon-custom-arrows:hover { /* 箭头按钮 弃用*/
+    background: url('../assets/arrows.png') center no-repeat !important;
+    background-size: cover !important;
+}
