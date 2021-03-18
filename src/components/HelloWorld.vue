@@ -7,20 +7,21 @@
 
 <script>
     // 引入相关的依赖
-    import BpmnModeler from 'bpmn-js/lib/Modeler'
+    // import BpmnModeler from 'bpmn-js/lib/Modeler'
     import propertiesPanelModule from 'bpmn-js-properties-panel'
     /*  //系统默认的右侧显示框
       import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'*/
     // 自定义的 properties-panel内容 右侧显示框
     import propertiesProviderModule from './properties-panel-extension/provider/authority';
-    // 引入描述文件
+    // 引入描述文件 右侧显示框
     import authorityModdleDescriptor from './properties-panel-extension/descriptors/authority'
 
     //Provider
     import CamundaPropertiesProvider from "bpmn-js-properties-panel/lib/provider/camunda";
     //汉化
     import customTranslate from '@/utils/customTranslate/customTranslate';
-
+    //自定义左侧组件
+    import CustomModeler from './customModeler'
     export default {
         name: '',
         components: {},
@@ -51,7 +52,7 @@
                     translate: ['value', customTranslate]
                 };
                 // 建模
-                this.bpmnModeler = new BpmnModeler({
+                this.bpmnModeler = new CustomModeler({
                     container: canvas,
                     //添加控制板
                     propertiesPanel: {
