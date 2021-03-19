@@ -2,7 +2,7 @@ import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 export default function(translate,group,element){
-    if(is(element,'bpmn:StartEvent')){
+    if(is(element,'bpmn:UserTask')){
         group.entries.push(entryFactory.selectBox(translate,{
             id: 'assignee',
             description: '负责人',
@@ -16,7 +16,6 @@ export default function(translate,group,element){
         }));
     }
     if(is(element,'bpmn:SequenceFlow')){
-        console.log("translate",translate)
         group.entries.push(entryFactory.textField(translate,{
             id: 'condition',
             label: '条件',

@@ -2,6 +2,26 @@
     <div class="containers" ref="content">
         <div class="canvas" ref="canvas"></div>
         <div id="js-properties-panel" class="panel"></div>
+        <div class="dialog-con">
+            <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="流程名称">
+                    <el-input v-model="form.name" @blur="handInput"></el-input>
+                </el-form-item>
+                <el-form-item label="负责人" prop="region">
+                    <el-select v-model="form.scope" @change="handSelect" style="width: 100%" clearable filterable placeholder="请选择">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.id"
+                                :label="item.label"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="handSubmit">立即提交</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -22,6 +42,7 @@
     import customTranslate from '@/utils/customTranslate/customTranslate';
     //自定义左侧组件
     import CustomModeler from './customModeler'
+
     export default {
         name: '',
         components: {},
@@ -37,7 +58,25 @@
                 // bpmn建模器
                 bpmnModeler: null,
                 container: null,
-                canvas: null
+                canvas: null,
+                XML: null,
+                //弹出框
+                form: {
+                    name: undefined,
+                    term: undefined,
+                    scope: undefined,
+                },
+                options: [
+                    {
+                        id: "1",
+                        label: "admin"
+                    },
+                    {
+                        id: "2",
+                        label: "张三"
+                    }
+                ],
+                elementShape: undefined,//当前操作的xml信息
             }
         },
         // 方法集合
@@ -78,14 +117,21 @@
                     // `headers`是要发送的自定义请求头
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(res => {
-                    ///打印得到的数据
-                    console.log("res", res);
-                    let bpmnXmlStr = res.data.data
-                    this.createNewDiagram(bpmnXmlStr)
+                    this.createNewDiagram(res.data.data)
                 }).catch(error => {
                     console.log("error", error);
                 })
             },
+            reset() {
+                //弹出框
+                this.form = {
+                    name: undefined,
+                    term: undefined,
+                    scope: undefined,
+                }
+                this.$refs["form"].resetFields();
+            },
+            //渲染xml
             createNewDiagram(bpmnXmlStr) {
                 // 将字符串转换成图显示出来
                 this.bpmnModeler.importXML(bpmnXmlStr, (err) => {
@@ -93,49 +139,182 @@
                         // console.error(err)
                     } else {
                         // 这里是成功之后的回调, 可以在这里做一系列事情
-                        this.success()
+                        this.XML = bpmnXmlStr
+                        // 监听 modeler
+                        this.addModelerListener()
+                        // 监听 element
+                        this.addEventBusListener()
                     }
                 })
             },
-            success() {
-                // console.log('创建成功!')
-                this.addEventBusListener()
-            },
-            addEventBusListener() {
+            // 监听 modeler
+            addModelerListener() {
                 const that = this;
-                that.bpmnModeler.on("commandStack.changed", function () {
-                    //每一次更改 都从新渲染
-                    // eslint-disable-next-line no-unused-vars
-                    that.saveDiagram(function (err, xml) {
-                        // console.log(xml);
+                const events = ["shape.added", "element.updateLabel"];
+                events.forEach(function (event) {
+                    that.bpmnModeler.on(event, (e) => {
+                        if (event === "shape.added") {
+                            console.log("新增了shape");
+                        } else if (event === "shape.move.end") {
+                            console.log("移动了shape");
+                        } else if (event === "shape.removed") {
+                            console.log("删除了shape");
+                        } else if (event === "element.updateLabel") {
+                            console.log("element.updateLabel", e.element);
+                        }
                     });
                 });
             },
-            saveDiagram(done) {
-                this.bpmnModeler.saveXML({format: true}, function (err, xml) {
-                    done(err, xml);
+            // 监听 element
+            addEventBusListener() {
+                let that = this;
+                const eventBus = that.bpmnModeler.get("eventBus");
+
+                const eventTypes = [
+                    "directEditing.activate",
+                    "directEditing.complete",
+                    "element.click",
+                    "element.changed",
+                ];
+                eventTypes.forEach(function (eventType) {
+                    eventBus.on(eventType, function (e) {
+                        if (!e || !e.element) {
+                            console.log("无效的e", e);
+                            return;
+                        }
+                        if (!e || e.element.type == "bpmn:Process") return;
+                        if (eventType === "element.changed") {
+                            // that.elementChanged(e)
+                        } else if (eventType === "element.click") {
+                            console.log("点击element", e)
+                            //获取当前操作的xml信息
+                            const bpmnjs = that.bpmnModeler;
+                            let elementRegistry = bpmnjs.get("elementRegistry");
+                            let shape = e.element ? elementRegistry.get(e.element.id) : e.shape;
+                            that.elementShape = shape
+                            //任务节点
+                            if (shape.type === "bpmn:UserTask") {
+                                console.log("task", e.element);
+                                that.reset()
+                                //给表单赋值
+                                that.form.name = shape.businessObject.name
+                                //人
+                                let attrs = shape.businessObject.$attrs
+                                console.log("attrs", attrs);
+                                //如果选了 就设置
+                                let stringSttrs = JSON.stringify(attrs)
+                                if (stringSttrs.includes("activiti:assignee") && !stringSttrs.includes("$")) {
+                                    that.form.scope = attrs["activiti:assignee"]
+                                }
+                            }
+                            //任务节点
+                            if (shape.type === "bpmn:SquenceFlow") {
+                                console.log("task", e.element);
+                            }
+                        } else if (eventType === "interactionEvents.updateHit") {
+                            console.log("interactionEvents.updateHit", e.element);
+                        } else if (eventType === "directEditing.complete") {
+                            console.log("directEditing.complete", e.element);
+                        }
+                    });
                 });
             },
+            // 操作Input
+            handInput() {
+                let that = this
+                //任务节点
+                if (that.elementShape.type === "bpmn:UserTask") {
+                    const modeling = that.bpmnModeler.get("modeling");
+                    modeling.updateProperties(that.elementShape, {
+                        name: that.form.name,
+                        isInterrupting: true,
+                    });
+                }
+                //箭头节点
+                if (that.elementShape.type === "SquenceFlow") {
+                    this.bpmnModeler.saveXML({format: true}, function (err, xml) {
+                        let id = that.elementShape.id
+                        that.xmlStr2json(xml, id)
+                    });
+                }
+            },
+            //操作选择器
+            handSelect() {
+                let that =this
+                //任务节点
+                if (that.elementShape.type === "bpmn:UserTask") {
+                    const modeling = that.bpmnModeler.get("modeling");
+                    modeling.updateProperties(that.elementShape, {
+                        "activiti:assignee": that.form.scope,
+                        isInterrupting: true,
+                    });
+                }
+            },
+            /**
+             * 箭头节点加权限
+             * @param {Object} xml
+             * @id {string} 当前操作的流程的id
+             */
+            xmlStr2json(xml, id) {
+                let obj = this.$x2js.xml2js(xml)
+                for (let item of obj.definitions.process.sequenceFlow) {
+                    if (id == item._id) {
+                        let flow = "<conditionExpression xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:type='tFormalExpression'>${leave.day&gt;=3}</conditionExpression>"
+                        Object.assign(item, this.$x2js.xml2js(flow))
+                    }
+                }
+                let xmlBbj = this.$x2js.js2xml(obj)
+                this.createNewDiagram(xmlBbj)
+            },
+            //提交服务器
+            handSubmit() {
+                this.$axios({
+                    method: "post",
+                    url: "http://192.168.1.34:7001/flow/bpmn",
+                    // `headers`是要发送的自定义请求头
+                    headers: {'Content-Type': 'application/json;charset=UTF-8'},
+                    data: {xmlStr: this.XML}
+                }).then(res => {
+                    ///打印得到的数据
+                    console.log("res", res)
+                    this.$message({type: 'success', message: "提交成功"})
+                }).catch(error => {
+                    this.$message({type: 'error', message: error})
+                })
+            }
         },
     }
 </script>
 
-<style scoped>
+<style scoped lang="less">
     .containers {
         background-color: #ffffff;
         width: 100%;
         height: calc(100vh - 52px);
+        overflow: hidden;
     }
 
     .canvas {
         width: 100%;
         height: 100%;
+        background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTBoNDBNMTAgMHY0ME0wIDIwaDQwTTIwIDB2NDBNMCAzMGg0ME0zMCAwdjQwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUwZTAiIG9wYWNpdHk9Ii4yIi8+PHBhdGggZD0iTTQwIDBIMHY0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+")
     }
 
     .panel {
         position: absolute;
         right: 0;
         top: 0;
-        width: 300px;
+        width: 280px;
+    }
+
+    .dialog-con {
+        position: fixed;
+        top: 5px;
+        right: 0;
+        width: 28%;
+        height: calc(100vh - 52px);;
+        box-shadow: 2px 2px 5px #000000;
+        background: white;
+        padding: 20px;
     }
 </style>

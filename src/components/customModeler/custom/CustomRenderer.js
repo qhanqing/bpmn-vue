@@ -40,7 +40,6 @@ export default function CustomRenderer(eventBus, styles, textRenderer) {
     }
 
     this.drawCustomElements = function(parentNode, element) {
-        console.log(element)
         const type = element.type // 获取到类型
         if (type !== 'label') {
             if (customElements.includes(type)) { // or customConfig[type]
@@ -52,8 +51,6 @@ export default function CustomRenderer(eventBus, styles, textRenderer) {
                 element['width'] = attr.width // 这里我是取了巧, 直接修改了元素的宽高
                 element['height'] = attr.height
                 svgAppend(parentNode, customIcon)
-                console.log(element.labels.length)
-                console.log(element.label)
                     // 判断是否有name属性来决定是否要渲染出label
                     // if (!hasLabelElements.includes(type) && element.businessObject.name) {
                     //     const text = svgCreate('text', {
@@ -64,7 +61,6 @@ export default function CustomRenderer(eventBus, styles, textRenderer) {
                     //     })
                     //     text.innerHTML = element.businessObject.name
                     //     svgAppend(parentNode, text)
-                    //     console.log(text)
                     // }
                     // renderLabel(parentNode, element.label)
                 return customIcon
@@ -88,8 +84,6 @@ CustomRenderer.prototype.canRender = function(element) {
 }
 
 CustomRenderer.prototype.drawShape = function(p, element) {
-    console.log(element)
-    console.log(element.type)
     if (customElements.includes(element.type)) {
         return this.drawCustomElements(p, element)
     }
