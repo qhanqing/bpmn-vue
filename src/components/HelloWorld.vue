@@ -234,6 +234,8 @@
                         authority: authorityModdleDescriptor,
                     }
                 })
+                //设置bpmn居左 1/10
+                this.bpmnModeler.get('canvas').scroll({ dx: window.innerWidth / 10, dy: 0 })
                 this.$axios({
                     method: "get",
                     url: "http://192.168.1.34:7001/flow/bpmn/1",

@@ -1,0 +1,2 @@
+ - CustomContextPadProvider     ---    自定义cuntextPad菜单栏
+ - CustomPalette                ---    自定义左侧菜单

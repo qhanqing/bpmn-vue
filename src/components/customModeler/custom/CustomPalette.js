@@ -29,7 +29,7 @@ PaletteProvider.prototype.getPaletteEntries = function () {
     //任务节点
     /*function createTask() {
         return function (event) {
-            const businessObject = bpmnFactory.create('bpmn:Task', {custom: 2});
+            const businessObject = bpmnFactory.create('bpmn:Task', {});
             // businessObject['custom'] = 1 // 这样不行
             const shape = elementFactory.createShape({
                 type: 'bpmn:Task',
@@ -46,7 +46,7 @@ PaletteProvider.prototype.getPaletteEntries = function () {
     //用户任务节点
     function createUserTask() {
         return function (event) {
-            const businessObject = bpmnFactory.create('bpmn:UserTask', {custom: 2});
+            const businessObject = bpmnFactory.create('bpmn:UserTask', {});
             // businessObject['custom'] = 1 // 这样不行
             const shape = elementFactory.createShape({
                 type: 'bpmn:UserTask',
