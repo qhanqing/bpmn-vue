@@ -86,5 +86,11 @@ export default function AuthorityPropertiesProvider(
         ];
     }
 }
-
+AuthorityPropertiesProvider.$inject =[
+    'eventBus',
+    'bpmnFactory',
+    'canvas',
+    'elementRegistry',
+    'translate',
+]
 inherits(AuthorityPropertiesProvider, PropertiesActivator);
