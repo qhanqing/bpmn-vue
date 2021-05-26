@@ -6,20 +6,21 @@ bpmn-js 是 BPMN 2.0 呈现工具包和 Web 建模器。它是用 JavaScript 编
 ####描述
 本人也是新手，借鉴了好多大佬的代码与文档，有些地方可能总结不到位或者用词不当，以后会系列更新的。望各位大佬多多指点。
 
-#联系我
+##联系我
  - 博客园 https://www.cnblogs.com/qhantime/
  - CSDN https://blog.csdn.net/qq_44938782
  - QQ+邮箱 851636176@qq.com
 
-#教程
+##教程
    LinDaiDai 的教程文档:[点击这里到教程](https://github.com/LinDaiDai/bpmn-chinese-document/blob/master/directory.md) https://github.com/LinDaiDai/bpmn-chinese-document/blob/master/directory.md
    
    penglianger 的教程文档:[点击这里到教程]( https://hub.fastgit.org/PL-FE/bpmn-doc)  https://hub.fastgit.org/PL-FE/bpmn-doc
    
-#示例
+   我的BPMN元素的基本介绍  [BPMN基本元素](src/doc/me/bpmnElement.md) <br/>
+##示例
    这是我的首页
    ![avatar](src/doc/img/index.png)
-#相关
+##相关
    penglianger的文档我引用进来了大家可以看看,去他的git上看更好>>> [点击这里跳转](https://hub.fastgit.org/PL-FE/bpmn-doc)
    
    [1 介绍](src/doc/quickIntroduction.md) <br/>
@@ -35,7 +36,7 @@ bpmn-js 是 BPMN 2.0 呈现工具包和 Web 建模器。它是用 JavaScript 编
    [11 自定义 Rules](src/doc/customRules.md) <br/>
  
  
-#我的开发文档
+##以下是我的开发文档
    ![avatar](src/doc/img/bpmnLayout.png)
 ###### 1安装bpmn
       npm i bpmn-js --save-D

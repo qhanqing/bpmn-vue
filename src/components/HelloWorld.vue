@@ -235,18 +235,19 @@
                     }
                 })
                 //设置bpmn居左 1/10
-                this.bpmnModeler.get('canvas').scroll({ dx: window.innerWidth / 10, dy: 0 })
-                this.$axios({
-                    method: "get",
-                    url: "http://192.168.1.34:7001/flow/bpmn/1",
-                    // `headers`是要发送的自定义请求头
-                    headers: {'Content-Type': 'multipart/form-data'}
-                }).then(res => {
-                    console.log("res", res)
-                    this.createNewDiagram(res.data.data ? res.data.data : xmlStr)
-                }).catch(error => {
-                    console.log("error", error);
-                })
+                this.bpmnModeler.get('canvas').scroll({dx: window.innerWidth / 10, dy: 0})
+                this.createNewDiagram(xmlStr)
+                /*  this.$axios({
+                      method: "get",
+                      url: "http://192.168.1.34:7001/flow/bpmn/1",
+                      // `headers`是要发送的自定义请求头
+                      headers: {'Content-Type': 'multipart/form-data'}
+                  }).then(res => {
+                      console.log("res", res)
+                      this.createNewDiagram(res.data.data ? res.data.data : xmlStr)
+                  }).catch(error => {
+                      console.log("error", error);
+                  })*/
             },
             //重置表单
             reset() {
